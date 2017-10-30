@@ -1,10 +1,17 @@
-$(document).ready(function() {
-var estado_titulo = true;
-
-    //LLENADO DEL TABLERO
+//$(document).ready(function() {
+    var estado_titulo = true;
     llenar_tablero();
 
-    //INTERMITENCIA DEL TITULO
+    $(".btn-reinicio").on('click', function () {
+
+      //LLENADO DEL TABLERO
+      $(this).text('Reiniciar')
+
+    })
+
+    ////////////////////////////////////////////////////////////////////////////
+    //                      INTERMITENCIA DEL TITULO
+    ////////////////////////////////////////////////////////////////////////////
     function cambiar_estado () {
       if (estado_titulo) {
         //console.log(estado_titulo);
@@ -15,57 +22,138 @@ var estado_titulo = true;
         estado_titulo = true;
       }
     }
+
     //Ejecutar la Funcion cada cierto tiempo
     setInterval(cambiar_estado, 2000);
 
-    $(".elemento").on('click', function () {
-      //CREACION DE ARREGLOS POR COLUMNAS
-      var col1 = $(".col-1").children('img');
-      var col2 = $(".col-2").children('img');
-      var col3 = $(".col-3").children('img');
-      var col4 = $(".col-4").children('img');
-      var col5 = $(".col-5").children('img');
-      var col6 = $(".col-6").children('img');
-      var col7 = $(".col-7").children('img');
 
-      //CREACION DE UNA MATRIZ CON TODOS LOS ELEMENTOS DEL TABLERO
-      var matriz = [col1, col2, col3, col4,
-                    col5, col6, col7];
+
+
+    $(".elemento").on('click', function () {
 
       //OBTENCION DEL ELEMENTO PADRE PARA DETERMINAR EL NUMERO DE COLUMNA
       var padre = $(this).parent().attr('class');
       var str = padre.substring(4,5); // <-- extrar el numero de la clase
-      str = parseInt(str); // <--- convertir el string a INT
-      fila = str-1; // <--- numero de la columna
+      col = parseInt(str); // <--- convertir el string a INT <--- numero de la columna
+      //col = str-1; //
 
       //OBTENCION DEL INDICE DEL ELEMENTO SELECCIONADO
       var indice = $(this).index();
+      var selected = $(this);
 
-      //OBTENCION DE LA RUTA DE LA IMAGEN DEL ELEMENTO SELECCIONADO
-      var ruta_imagen = $(this).attr('src');
+      //INVOCAR LA FUNCION PARA VERIFICAR LAS COMBINACIONES DE LOS DULCES
+      comprobar_dulces(col, indice, selected);
 
+      //console.log(indice, fila, ruta_imagen, matriz[fila][indice]);
 
-      console.log(indice, fila, ruta_imagen, matriz[fila][indice]);
-      
 
 
     });
 
-});
+//});
 
-    /*
+    ////////////////////////////////////////////////////////////////////////////
+    //              COMPROBACION DE LOS DULCES
+    ////////////////////////////////////////////////////////////////////////////
 
-    function comp_combinacion () {
+    function comprobar_dulces(col, indice, selected) {
+
+      // VARIABLES GLOBALES DENTRO DE LA FUNCION
+      var selectedF;
+      var rightF;
+      var leftF;
+
+      //////////////////////////////////////////////////////////////
+      //    COMPROBACION VERTICAL                                 //
+      //////////////////////////////////////////////////////////////
+
+      //OBJETOS ARRIBA Y ABAJO
+      var upD = selected.prev('img');
+      var downD = selected.next('img');
+      var seleD = selected;
+
+      //ATRIBUTO SRC
+      var upAtr = upD.attr('src');
+      var selAtr = selected.attr('src');
+      var downAtr = downD.attr('src');
+
+      if (selAtr == upAtr && selAtr == downAtr && upAtr == downAtr) {
+        //RECOGER EL CONTENEDOR PADRE DE LOS ELEMENTOS A ELIMINAR
+        selectedF = seleD.parent('div');
+
+        upD.detach();
+        seleD.detach();
+        downD.detach();
+
+        //ENVIAR EL CONTENEDOR PADRE COMO PARAMETRO PARA LLENARLO
+        completar_columna(selectedF);
+        //console.log(selectedF);
+
+      } else {
+
+        //////////////////////////////////////////////////////////////
+        //    COMPROBACION HORIZONTAL                               //
+        //////////////////////////////////////////////////////////////
 
 
+        //VALORES QUE RECIBE LA FUNCION
+        var ind = indice;
+        var rightClass = "col-"+(col+1);
+        var leftClass = 'col-'+(col-1);
+
+        //DULCES: SELECCIONADO, ANTERIOR Y SIGUIENTE
+        var rightD = $("."+rightClass+" img:eq("+ind+")");
+        var leftD = $("."+leftClass+" img:eq("+ind+")");
+
+        //ATRIBUTO SRC DE LOS DULCES
+        var rightAtr = rightD.attr('src');
+        var leftAtr = leftD.attr('src');
+
+        //COMPROBAR SI LOS ATRIBUTOS SON IGUALES
+        if (selAtr == rightAtr && selAtr == leftAtr && rightAtr == leftAtr) {
+          //Obtener el padre de los elementos para llenarlos posterior a eliminar los elementos
+          /*
+          seleD.parent('div');
+          rightD.parent('div');
+          leftD.parent('div');
+          */
+          seleD.detach();
+          rightD.detach();
+          leftD.detach();
+        } else {
+          //console.log('No son Iguales');
+        }
+
+        //var texto = String(nextD); // <-- FUNCION PARA CONVERTIR VARIABLE A STRING
+
+        //console.log(leftAtr, selAtr, rightAtr);
+      }
 
 
-      //var matriz = [columna1, columna2, columna3, columna4, columna5, columna6, columna7];
-
-
-      //console.log(matriz);
     }
-    */
+
+    //FUNCION PARA LLENAR COLUMNAS LUEGO DE ENCONTRAR DULCES IGUALES
+    function completar_columna (selectedF) {
+      var contC = selectedF.attr('class');
+      var Nhijos = selectedF.children('img').length;
+      var total = 7;
+      var dif = total-Nhijos;
+      var arreglo = new Array(dif);
+      for (var i = 0; i < arreglo.length; i++) {
+        arreglo[i] = Math.floor(Math.random() * (4 - 1 + 1) + 1);
+        //console.log(arreglo[i]);
+
+        //Cambio de ruta de la imagen
+        $("."+contC).prepend("<img class='elemento'></img>");
+        $("."+contC+" img:first-child").attr('src', 'image/'+arreglo[i]+'.png');
+
+      }
+
+    }
+
+
+
+
 
     // FUNCION PARA LLENAR EL TABLERO
     function llenar_tablero () {
@@ -156,8 +244,6 @@ var estado_titulo = true;
           $("img:last").attr('src', 'image/'+arreglo[i]+'.png');
 
         }
-
-
 
 
     }
