@@ -44,9 +44,6 @@
       //INVOCAR LA FUNCION PARA VERIFICAR LAS COMBINACIONES DE LOS DULCES
       comprobar_dulces(col, indice, selected);
 
-      //console.log(indice, fila, ruta_imagen, matriz[fila][indice]);
-
-
 
     });
 
@@ -81,12 +78,12 @@
         //RECOGER EL CONTENEDOR PADRE DE LOS ELEMENTOS A ELIMINAR
         selectedF = seleD.parent('div');
 
-        upD.detach();
-        seleD.detach();
-        downD.detach();
+        upD.remove();
+        seleD.remove();
+        downD.remove();
 
         //ENVIAR EL CONTENEDOR PADRE COMO PARAMETRO PARA LLENARLO
-        completar_columna(selectedF);
+        completar_columna(selectedF, 0, 0);
         //console.log(selectedF);
 
       } else {
@@ -101,7 +98,7 @@
         var rightClass = "col-"+(col+1);
         var leftClass = 'col-'+(col-1);
 
-        //DULCES: SELECCIONADO, ANTERIOR Y SIGUIENTE
+        //DULCES: DERECHA E IZQUIERDA
         var rightD = $("."+rightClass+" img:eq("+ind+")");
         var leftD = $("."+leftClass+" img:eq("+ind+")");
 
@@ -111,17 +108,23 @@
 
         //COMPROBAR SI LOS ATRIBUTOS SON IGUALES
         if (selAtr == rightAtr && selAtr == leftAtr && rightAtr == leftAtr) {
-          //Obtener el padre de los elementos para llenarlos posterior a eliminar los elementos
-          /*
-          seleD.parent('div');
-          rightD.parent('div');
-          leftD.parent('div');
-          */
-          seleD.detach();
-          rightD.detach();
-          leftD.detach();
+
+          //OBTENER CONTENEDOR PADRE DE LOS ELEMENTOS
+
+          selectedF = seleD.parent('div');
+          rightF = rightD.parent('div');
+          leftF = leftD.parent('div');
+
+          console.log(leftD, seleD, rightD);
+          seleD.remove();
+          rightD.remove();
+          leftD.remove();
+
+          //INVOCAR LA FUNCION PARA LLENAR LOS CONTENEDORES PADRE (COLUMNAS)
+          completar_columna(selectedF, leftF, rightF);
+
         } else {
-          //console.log('No son Iguales');
+          console.log('No son Iguales');
         }
 
         //var texto = String(nextD); // <-- FUNCION PARA CONVERTIR VARIABLE A STRING
@@ -132,22 +135,71 @@
 
     }
 
-    //FUNCION PARA LLENAR COLUMNAS LUEGO DE ENCONTRAR DULCES IGUALES
-    function completar_columna (selectedF) {
-      var contC = selectedF.attr('class');
-      var Nhijos = selectedF.children('img').length;
-      var total = 7;
-      var dif = total-Nhijos;
-      var arreglo = new Array(dif);
+    ////////////////////////////////////////////////////////////////////////////
+    //    FUNCION PARA LLENAR COLUMNAS LUEGO DE ENCONTRAR DULCES IGUALES
+    ////////////////////////////////////////////////////////////////////////////
+
+    function completar_columna (selectedF, leftF, rightF) {
+
+      //VALORES QUE RECIBE LA FUNCION
+      var rightF = rightF;
+      var leftF = leftF;
+
+      var fatherClass = selectedF.attr('class'); // <!-- CLASE DEL PADRE DEL ELEMENTO SELECCIONADO
+      var Nhijos = selectedF.children('img').length; // <!-- NO. DE ELEMENTOS QUE CONTIENE EL PADRE
+      var total = 7; // <!-- CANTIDAD MAXIMA DE HIJOS QUE DEBE TENER
+      var dif = total-Nhijos; // <!-- DIFERENCIA ENTRE LOS HIJOS QUE TIENE Y LOS QUE DEBERIA TENER
+      var arreglo = new Array(dif); // <!-- ARRAY CON EL TAMAÑO DE LA DIFERENCIA PARA DELIMITAR LAS ITERACIONES
+
+      // LLENADO DEL PADRE DEL ELEMENTO SELECCIONADO
       for (var i = 0; i < arreglo.length; i++) {
         arreglo[i] = Math.floor(Math.random() * (4 - 1 + 1) + 1);
         //console.log(arreglo[i]);
 
-        //Cambio de ruta de la imagen
-        $("."+contC).prepend("<img class='elemento'></img>");
-        $("."+contC+" img:first-child").attr('src', 'image/'+arreglo[i]+'.png');
+        //ASIGNACION DE RUTA DE LA IMAGEN
+        $("."+fatherClass).prepend("<img class='elemento'></img>");
+        $("."+fatherClass+" img:first-child").attr('src', 'image/'+arreglo[i]+'.png');
 
       }
+
+      // COMPROBAR SI LA FUNCION RECIBIO EL PADRE DE LOS ELEMENTOS DE LAS OTRAS COLUMNAS
+      if (leftF !== 0 && rightF !== 0) {
+
+        // LLENAR CONTENEDOR PADRE IZQUIERDA
+        var fatherClassLeft = leftF.attr('class');
+        var NhijosLeft = leftF.children('img').length;
+        var difLeft = total-NhijosLeft;
+        var arregloL = new Array(difLeft);
+
+        for (var i = 0; i < arregloL.length; i++) {
+          arregloL[i] = Math.floor(Math.random() * (4 - 1 + 1) + 1);
+          //console.log(arreglo[i]);
+
+          //ASIGNACION DE RUTA DE LA IMAGEN
+          $("."+fatherClassLeft).prepend("<img class='elemento'></img>");
+          $("."+fatherClassLeft+" img:first-child").attr('src', 'image/'+arregloL[i]+'.png');
+
+        }
+
+        // LLENAR CONTENEDOR PADRE DERECHA
+        var fatherClassRight = rightF.attr('class');
+        var NhijosRight = rightF.children('img').length;
+        var difRight = total-NhijosRight;
+        var arregloR = new Array(difRight);
+
+        for (var i = 0; i < arregloR.length; i++) {
+          arregloR[i] = Math.floor(Math.random() * (4 - 1 + 1) + 1);
+          //console.log(arreglo[i]);
+
+          //ASIGNACION DE RUTA DE LA IMAGEN
+          $("."+fatherClassRight).prepend("<img class='elemento'></img>");
+          $("."+fatherClassRight+" img:first-child").attr('src', 'image/'+arregloR[i]+'.png');
+
+        }
+
+      }
+
+
 
     }
 
