@@ -1,13 +1,20 @@
-//$(document).ready(function() {
+
     var estado_titulo = true;
-    llenar_tablero();
+    //llenar_tablero();
+
+    ////////////////////////////////////////////////////////////////////////////
+    //                          LLENAR TABLERO
+    ///////////////////////////////////////////////////////////////////////////
 
     $(".btn-reinicio").on('click', function () {
+      $("[class|='col']").empty();
+      $(this).text('Reiniciar');
+      llenar_tablero();
 
-      //LLENADO DEL TABLERO
-      $(this).text('Reiniciar')
 
-    })
+    });
+
+    ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     //                      INTERMITENCIA DEL TITULO
@@ -26,28 +33,421 @@
     //Ejecutar la Funcion cada cierto tiempo
     setInterval(cambiar_estado, 2000);
 
+    ////////////////////////////////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    //                      COMPROBACION DE DULCES
+    ////////////////////////////////////////////////////////////////////////////
+
+
+  $(document).on('click', '.elemento', function() { // <-- se usa DOCUMENT para escuchar el evento ya que es un elemento que no existia al cargar el DOM.
+    //OBTENCION DEL ELEMENTO PADRE PARA DETERMINAR EL NUMERO DE COLUMNA
+    var padre = $(this).parent().attr('class');
+    var str = padre.substring(4,5); // <-- extraer el numero de la clase
+    col = parseInt(str); // <--- convertir el string a INT <--- numero de la columna
+    //col = str-1; //
+
+    //OBTENCION DEL INDICE DEL ELEMENTO SELECCIONADO
+    var selIndex = $(this).index();
+    var selItem = $(this);
+
+    console.log(selIndex, col, selItem);
+
+    //INVOCAR LA FUNCION PARA VERIFICAR LAS COMBINACIONES DE LOS DULCES
+    comprobar_vertical(col, selIndex, selItem);
+
+
+  });
+
+
+    function comprobar_vertical (col, selIndex, selItem) {
+
+      // PARAMETROS RECIBIDOS
+      var col = col;
+      var selIndex = selIndex;
+      var selItem = selItem;
+
+      // ATRUBUTO SRC (RUTA DE LA IMAGEN) DEL ELEMENTO SELECCIONADO
+      var selSrc = selItem.attr('src');
+
+      if (selIndex !== 0 && selIndex !== 6) {
+        //console.log('Soy distinto a 0 y 6');
+        switch (selIndex) {
+          case 1:
+
+          var item0 = selItem.prev('img');
+          var item2 = selItem.next('img');
+          var item3 = selItem.next('img').next('img');
+          var item4 = selItem.next('img').next('img').next('img');
+          var item5 = selItem.next('img').next('img').next('img').next('img');
+          var item6 = selItem.next('img').next('img').next('img').next('img').next('img');
+
+          //ATRIBUTO SRC
+          var item0Atr = item0.attr('src');
+          var item2Atr = item2.attr('src');
+          var item3Atr = item3.attr('src');
+          var item4Atr = item4.attr('src');
+          var item5Atr = item5.attr('src');
+          var item6Atr = item6.attr('src');
+
+          if (selSrc == item0Atr && selSrc == item2Atr) { // <-- 1. 1=0 y 1=2
+            item0.remove();
+            selItem.remove();
+            item2.remove();
+            if (selSrc == item3Atr) {
+              item3.remove();
+              if (selSrc == item4Atr) {
+                item4.remove();
+                if (selSrc == item5Atr) {
+                  item5.remove();
+                  if (selSrc == item6Atr) {
+                    item6.remove();
+                  }
+                }
+              }
+            }
+          }
+
+          if (selSrc !== item0Atr && selSrc == item2Atr) { // <-- 2. 1!=0 y 1=2
+            if (selSrc == item3Atr) {
+              selItem.remove();
+              item2.remove();
+              item3.remove();
+              if (selSrc == item4Atr) {
+                item4.remove();
+                if (selSrc == item5Atr) {
+                  item5.remove();
+                  if (selSrc == item6Atr) {
+                    item6.remove();
+                  }
+                }
+              }
+            }
+          }
 
 
 
-    $(".elemento").on('click', function () {
+          //console.log(upAtr, downAtr, downAtr2);
 
-      //OBTENCION DEL ELEMENTO PADRE PARA DETERMINAR EL NUMERO DE COLUMNA
-      var padre = $(this).parent().attr('class');
-      var str = padre.substring(4,5); // <-- extrar el numero de la clase
-      col = parseInt(str); // <--- convertir el string a INT <--- numero de la columna
-      //col = str-1; //
+            break;
+          case 2:
+            //console.log('hola soy 2');
 
-      //OBTENCION DEL INDICE DEL ELEMENTO SELECCIONADO
-      var indice = $(this).index();
-      var selected = $(this);
+            var item0 = selItem.prev('img').prev('img');
+            var item1 = selItem.prev('img');
+            var item3 = selItem.next('img');
+            var item4 = selItem.next('img').next('img');
+            var item5 = selItem.next('img').next('img').next('img');
+            var item6 = selItem.next('img').next('img').next('img').next('img');
 
-      //INVOCAR LA FUNCION PARA VERIFICAR LAS COMBINACIONES DE LOS DULCES
-      comprobar_dulces(col, indice, selected);
+            //ATRIBUTO SRC
+            var item0Atr = item0.attr('src');
+            var item1Atr = item1.attr('src');
+            var item3Atr = item3.attr('src');
+            var item4Atr = item4.attr('src');
+            var item5Atr = item5.attr('src');
+            var item6Atr = item6.attr('src');
+
+            if (selSrc == item1Atr && selSrc == item3Atr) { // <-- 1. 2=1 y 2=3
+              if (selSrc == item0Atr) {
+                item0.remove();
+              }
+              item1.remove();
+              selItem.remove();
+              item3.remove();
+              if (selSrc == item4Atr) {
+                item4.remove();
+                if (selSrc == item5Atr) {
+                  item5.remove();
+                  if (selSrc == item6Atr) {
+                    item6.remove();
+                  }
+                }
+              }
+
+            }
+
+            if (selSrc == item1Atr && selSrc !== item3Atr) { // <-- 2. 2=1 y 2!=3
+              if (selSrc == item0Atr) {
+                item0.remove();
+                item1.remove();
+                selItem.remove();
+              }
+            }
+
+            if (selSrc !== item1Atr && selSrc == item3Atr) { // <-- 3. 2!=1 y 2=3
+              if (selSrc == item4Atr) {
+                selItem.remove();
+                item3.remove();
+                item4.remove();
+                if (selSrc == item5Atr) {
+                  item5.remove();
+                  if (selSrc == item6Atr) {
+                    item6.remove();
+                  }
+                }
+              }
+            }
 
 
-    });
+            break;
+          case 3:
+            //console.log('hola soy 3');
+            var item0 = selItem.prev('img').prev('img').prev('img');
+            var item1 = selItem.prev('img').prev('img');
+            var item2 = selItem.prev('img');
+            var item4 = selItem.next('img');
+            var item5 = selItem.next('img').next('img');
+            var item6 = selItem.next('img').next('img').next('img');
 
-//});
+            //ATRIBUTO SRC
+            var item0Atr = item0.attr('src');
+            var item1Atr = item1.attr('src');
+            var item2Atr = item2.attr('src');
+            var item4Atr = item4.attr('src');
+            var item5Atr = item5.attr('src');
+            var item6Atr = item6.attr('src');
+
+            if (selSrc == item2Atr && selSrc == item4Atr) {  //<-- 1. 3=2 y 3=4
+              item2.remove();
+              selItem.remove();
+              item4.remove();
+              if (selSrc == item1Atr) {
+                item1.remove();
+                if (selSrc == item0Atr) {
+                  item0.remove();
+                }
+              }
+              if (selSrc == item5Atr) {
+                item5.remove();
+                if (selSrc == item6Atr) {
+                  item6.remove();
+                }
+              }
+            }
+            if (selSrc == item2Atr && selSrc !== item4Atr) { // <-- 2. 3=2 y 3!=4
+              if (selSrc == item1Atr) {
+                item1.remove();
+                item2.remove();
+                selItem.remove();
+                if (selSrc == item0Atr) {
+                  item0.remove();
+                }
+              }
+            }
+            if (selSrc !== item2Atr && selSrc == item4Atr) { // <-- 3!=2 y 3=4
+              if (selSrc == item5Atr) {
+                selItem.remove();
+                item4.remove();
+                item5.remove();
+                if (selSrc == item6Atr) {
+                  item6.remove();
+                }
+              }
+            }
+
+            break;
+
+          case 4:
+
+            var item0 = selItem.prev('img').prev('img').prev('img').prev('img');
+            var item1 = selItem.prev('img').prev('img').prev('img');
+            var item2 = selItem.prev('img').prev('img');
+            var item3 = selItem.prev('img');
+            var item5 = selItem.next('img');
+            var item6 = selItem.next('img').next('img');
+
+            //ATRIBUTO SRC
+            var item0Atr = item0.attr('src');
+            var item1Atr = item1.attr('src');
+            var item2Atr = item2.attr('src');
+            var item3Atr = item3.attr('src');
+            var item5Atr = item5.attr('src');
+            var item6Atr = item6.attr('src');
+
+            if (selSrc == item3Atr && selSrc == item5Atr) { // <-- 4=3 y 4=5
+              if (selSrc == item6Atr) {
+                item6.remove();
+                item5.remove();
+                selItem.remove();
+                item3.remove();
+              }
+              item5.remove();
+              selItem.remove();
+              item3.remove();
+              if (selSrc == item2Atr) {
+                item2.remove();
+                if (selSrc == item1Atr) {
+                  item1.remove();
+                  if (selSrc == item0Atr) {
+                    item0.remove();
+                  }
+                }
+              }
+            }
+
+            if (selSrc == item3Atr && selSrc !== item5Atr) { // <-- 4=3 y 4!=5
+              if (selSrc == item2Atr) {
+                selItem.remove();
+                item3.remove();
+                item2.remove();
+                if (selSrc == item1Atr) {
+                  item1.remove();
+                  if (selSrc == item0Atr) {
+                    item0.remove();
+                  }
+                }
+              }
+            }
+
+            if (selSrc !== item3Atr && selSrc == item5Atr) { // <-- 4!=3 y 4=5
+              if (selSrc == item6Atr) {
+                selItem.remove();
+                item5.remove();
+                item6.remove();
+              }
+            }
+
+            break;
+
+          case 5:
+
+            var item0 = selItem.prev('img').prev('img').prev('img').prev('img').prev('img');
+            var item1 = selItem.prev('img').prev('img').prev('img').prev('img');
+            var item2 = selItem.prev('img').prev('img').prev('img');
+            var item3 = selItem.prev('img').prev('img');
+            var item4 = selItem.prev('img');
+            var item6 = selItem.next('img');
+
+            //ATRIBUTO SRC
+            var item0Atr = item0.attr('src');
+            var item1Atr = item1.attr('src');
+            var item2Atr = item2.attr('src');
+            var item3Atr = item3.attr('src');
+            var item4Atr = item4.attr('src');
+            var item6Atr = item6.attr('src');
+
+            if (selSrc == item6Atr && selSrc == item4Atr) { // <-- 5=6 y 5=4
+              item6.remove();
+              selItem.remove();
+              item4.remove();
+              if (selSrc == item3Atr) {
+                item3.remove();
+                if (selSrc == item2Atr) {
+                  item2.remove();
+                  if (selSrc == item1Atr) {
+                    item1.remove();
+                    if (selSrc == item0Atr) {
+                      item0.remove();
+                    }
+                  }
+                }
+              }
+            }
+
+            if (selSrc !== item6Atr && selSrc == item4Atr) { // <-- 5!=6 y 5=4
+              if (selSrc == item3Atr) {
+                selItem.remove();
+                item4.remove();
+                item3.remove();
+                if (selSrc == item2Atr) {
+                  item2.remove();
+                  if (selSrc == item1Atr) {
+                    item1.remove();
+                    if (selSrc == item0Atr) {
+                      item0.remove();
+                    }
+                  }
+                }
+              }
+            }
+
+
+            break;
+
+
+          default:
+
+        }
+
+
+      } else if (selIndex == 0) {
+
+        var item1 = selItem.next('img');
+        var item2 = selItem.next('img').next('img');
+        var item3 = selItem.next('img').next('img').next('img');
+        var item4 = selItem.next('img').next('img').next('img').next('img');
+        var item5 = selItem.next('img').next('img').next('img').next('img').next('img');
+        var item6 = selItem.next('img').next('img').next('img').next('img').next('img').next('img');
+
+        //ATRIBUTO SRC
+        var item1Atr = item1.attr('src');
+        var item2Atr = item2.attr('src');
+        var item3Atr = item3.attr('src');
+        var item4Atr = item4.attr('src');
+        var item5Atr = item5.attr('src');
+        var item6Atr = item6.attr('src');
+
+        if (selSrc == item1Atr && selSrc == item2Atr) {
+          selItem.remove();
+          item1.remove();
+          item2.remove();
+          if (selSrc == item3Atr) {
+            item3.remove();
+            if (selSrc == item4Atr) {
+              item4.remove();
+              if (selSrc == item5Atr) {
+                item5.remove();
+                if (selSrc == item6Atr) {
+                  item6.remove();
+                }
+              }
+            }
+          }
+        }
+
+      } else if (selIndex == 6) {
+        //console.log('soy igual a 6');
+        var item0 = selItem.prev('img').prev('img').prev('img').prev('img').prev('img').prev('img');
+        var item1 = selItem.prev('img').prev('img').prev('img').prev('img').prev('img');
+        var item2 = selItem.prev('img').prev('img').prev('img').prev('img');
+        var item3 = selItem.prev('img').prev('img').prev('img');
+        var item4 = selItem.prev('img').prev('img');
+        var item5 = selItem.prev('img');
+
+        //ATRIBUTO SRC
+        var item0Atr = item0.attr('src');
+        var item1Atr = item1.attr('src');
+        var item2Atr = item2.attr('src');
+        var item3Atr = item3.attr('src');
+        var item4Atr = item4.attr('src');
+        var item5Atr = item5.attr('src');
+
+        if (selSrc == item5Atr && selSrc == item4Atr) {
+          selItem.remove();
+          item5.remove();
+          item4.remove();
+          if (selSrc == item3Atr) {
+            item3.remove();
+            if (selSrc == item2Atr) {
+              item2.remove();
+              if (selSrc == item1Atr) {
+                item1.remove();
+                if (selSrc == item0Atr) {
+                  item0.remove();
+                }
+              }
+            }
+          }
+        }
+
+
+      }
+    } //<-- FIN DE LA FUNCION COMPROBAR VERTICAL
+
+
+    /*
 
     ////////////////////////////////////////////////////////////////////////////
     //              COMPROBACION DE LOS DULCES
@@ -204,7 +604,7 @@
     }
 
 
-
+    */
 
 
     // FUNCION PARA LLENAR EL TABLERO
